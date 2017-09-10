@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar target/lab0.jar $1 $2 $3
+python src/server.py $1 $2 $3
