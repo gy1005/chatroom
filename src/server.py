@@ -20,7 +20,15 @@ def detect_alive_servers(server_id):
     while True:
         new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         new_sock.settimeout(1.0)
-        new_sock.connect(('localhost', server_id + 20000))
+        try:
+            new_sock.connect(('localhost', server_id + 20000))
+        except:
+            if server_id in alive_servers:
+                alive_servers.remove(server_id)
+            new_sock.close()
+            time.sleep(1.0)
+            continue
+
         try:
             new_sock.sendall("heartbeats_req")
         except socket.timeout:
@@ -29,7 +37,7 @@ def detect_alive_servers(server_id):
             new_sock.close()
             continue
         try:
-            resp = new_sock.recv("1024")
+            resp = new_sock.recv(1024)
             if resp == "heartbeats_resp":
                 if server_id not in alive_servers:
                     alive_servers.append(server_id)
