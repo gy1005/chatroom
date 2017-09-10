@@ -16,7 +16,7 @@ alive_servers = []
 msg_log = []
 
 
-def detect_alive_servers(server_id):
+def heartbeats_send(server_id):
     while True:
         new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         new_sock.settimeout(1.0)
@@ -75,6 +75,7 @@ def conn_handler(conn):
             else:
                 send_str += ',' + str(sorted_alive_servers[i])
         conn.sendall("alive " + send_str)
+
     elif request[0:9] == 'broadcast':
         msg_log.append(request[10:])
         for i in alive_servers:
@@ -83,25 +84,35 @@ def conn_handler(conn):
                 new_sock.connect(('localhost', i + 20000))
                 new_sock.sendall(request[10:])
                 new_sock.close()
-    elif request == 'heartbeats_req':
-        conn.sendall("heartbeats_resp")
     else:
         msg_log.append(request)
 
+def heartbeats_recv(server_socket):
+    while True:
+        conn, addr = server_socket.accept()
+        request = conn.recv(1024)
+        if request == "heartbeats_req":
+            conn.sendall("heartbeats_resp")
 
 def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((address, port))
-    s.listen(5)
+    master_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    master_socket.bind((address, port))
+    master_socket.listen(5)
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((address, 20000 + process_id))
+    server_socket.listen(5)
 
     for i in range(num_server):
         if i != process_id:
-            t = threading.Thread(target=detect_alive_servers, args=(i,))
+            t = threading.Thread(target=heartbeats_send, args=(i,))
             t.start()
 
+    t_recv = threading.Thread(target=heartbeats_recv, args=(server_socket,))
+    t_recv.start()
 
     while True:
-        conn, addr = s.accept()
+        conn, addr = master_socket.accept()
         client_handler = threading.Thread(target=conn_handler, args=(conn,))
         client_handler.start()
 
