@@ -65,7 +65,7 @@ def conn_handler(conn):
                 send_str += msg_log[i]
             else:
                 send_str += ',' + msg_log[i]
-        conn.sendall("messages " + send_str)
+        conn.sendall("messages " + send_str + '\n')
 
     elif request[0:5] == "alive":
         send_str = ''
@@ -75,7 +75,8 @@ def conn_handler(conn):
                 send_str += str(sorted_alive_servers[i])
             else:
                 send_str += ',' + str(sorted_alive_servers[i])
-        conn.sendall("alive " + send_str)
+        conn.sendall("alive " + send_str + '\n')
+        # print "alive " + send_str
 
     elif request[0:9] == 'broadcast':
         msg_log.append(request[10:])
@@ -84,7 +85,7 @@ def conn_handler(conn):
                 new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 new_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 new_sock.connect(('localhost', i + 20000))
-                new_sock.sendall(request[10:])
+                new_sock.sendall(request[10:] + '\n')
                 new_sock.close()
     else:
         msg_log.append(request)
