@@ -20,6 +20,7 @@ def heartbeats_send(server_id):
     while True:
         new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         new_sock.settimeout(1.0)
+        new_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             new_sock.connect(('localhost', server_id + 20000))
         except:
@@ -81,6 +82,7 @@ def conn_handler(conn):
         for i in alive_servers:
             if i != process_id:
                 new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                new_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 new_sock.connect(('localhost', i + 20000))
                 new_sock.sendall(request[10:])
                 new_sock.close()
@@ -96,10 +98,12 @@ def heartbeats_recv(server_socket):
 
 def main():
     master_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    master_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     master_socket.bind((address, port))
     master_socket.listen(5)
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((address, 20000 + process_id))
     server_socket.listen(5)
 
