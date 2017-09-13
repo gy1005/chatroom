@@ -1,2 +1,2 @@
 # ReadMe
-Include documentation for course staff to run test cases.
+- Run test1 and test2 

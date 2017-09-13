@@ -1,0 +1,50 @@
+0 start 5 10000
+1 start 5 10001
+2 start 5 10002
+0 alive
+1 alive
+2 alive
+0 broadcast m0
+sleep 1000
+0 crash
+1 get
+2 get
+1 alive
+2 alive
+1 broadcast m1
+1 broadcast m2
+sleep 1000
+1 get
+2 get
+3 start 5 10003
+4 start 5 10004
+1 alive
+2 alive
+3 alive
+4 alive
+2 broadcast m3
+2 broadcast m4
+2 broadcast m5
+2 broadcast m6
+sleep 1000
+1 get
+2 get
+3 get
+4 get
+0 start 5 10000
+0 alive
+1 alive
+2 alive
+3 alive
+4 alive
+0 broadcast m7
+0 broadcast m8
+0 broadcast m9
+0 broadcast m10
+0 broadcast m11
+0 get
+1 get
+2 get
+3 get
+4 get
+exit

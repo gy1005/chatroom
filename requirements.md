@@ -1,5 +1,4 @@
 # Requirements
 List requirements here:
-- requirement1
-- requirement2
-- ...
+- python 2.7.6
+
